@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toms Mathe-Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --farbe: #4A90D9;
+    --bg: #FAF8F4;
+    --karte-bg: #FFFFFF;
+    --text: #2D2A26;
+    --text-soft: #6B6760;
+    --gruen: #4CAF50;
+    --rot: #E5524D;
+    --gelb: #F5B83D;
+    --radius: 20px;
+    --schatten: 0 4px 16px rgba(45, 42, 38, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  body {
+    line-height: 1.6;
+    font-size: 18px;
+  }
+
+  #app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  h1, h2, h3 {
+    font-weight: 800;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  p { margin: 0 0 12px 0; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  /* ===== STARTSEITE ===== */
+  .startseite { text-align: center; }
+
+  .kopf { margin-bottom: 32px; }
+  .kopf-emoji { font-size: 56px; margin-bottom: 8px; }
+  .kopf h1 { font-size: 32px; color: var(--text); }
+  .kopf-sub { color: var(--text-soft); font-size: 18px; font-weight: 700; margin-top: 6px; }
+
+  .themen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .themen-karte {
+    --farbe: #4A90D9;
+    background: var(--karte-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    padding: 28px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border: 3px solid transparent;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .themen-karte:hover, .themen-karte:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--farbe);
+  }
+  .themen-icon { font-size: 44px; }
+  .themen-name { font-size: 20px; font-weight: 800; color: var(--farbe); }
+
+  .hinweis { color: var(--text-soft); font-weight: 700; font-size: 17px; }
+
+  /* ===== ZURÜCK BUTTON ===== */
+  .zurueck-btn {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--farbe);
+    background: color-mix(in srgb, var(--farbe) 12%, white);
+    padding: 10px 18px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ===== MODUS-AUSWAHL ===== */
+  .modus-auswahl .kopf { margin-bottom: 24px; }
+  .modus-auswahl .kopf h1 { color: var(--farbe); }
+
+  .modus-liste { display: flex; flex-direction: column; gap: 14px; }
+
+  .modus-karte {
+    background: var(--karte-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    border: 3px solid transparent;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .modus-karte:hover, .modus-karte:focus-visible {
+    transform: translateX(4px);
+    border-color: var(--farbe);
+  }
+  .modus-icon { font-size: 36px; flex-shrink: 0; }
+  .modus-titel { font-size: 19px; font-weight: 800; color: var(--text); }
+  .modus-desc { font-size: 15px; color: var(--text-soft); font-weight: 600; margin-top: 2px; }
+
+  /* ===== FORTSCHRITT ===== */
+  .fortschritt-leiste { margin-bottom: 20px; }
+  .fortschritt-text {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+  }
+  .fortschritt-balken {
+    background: #EDE9E2;
+    height: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .fortschritt-fuellung {
+    background: var(--farbe);
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+  }
+
+  /* ===== LERN-MODUS ===== */
+  .lern-karte {
+    background: var(--karte-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    padding: 28px 24px;
+    margin-bottom: 20px;
+  }
+  .lern-karte h2 {
+    font-size: 23px;
+    color: var(--farbe);
+    margin-bottom: 16px;
+  }
+  .lern-inhalt { font-size: 17px; }
+  .lern-inhalt strong { color: var(--text); }
+
+  .formel {
+    font-family: 'Nunito', monospace;
+    font-weight: 800;
+    background: #F4F1EA;
+    padding: 8px 14px;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 4px 0;
+    font-size: 17px;
+  }
+
+  .merkbox {
+    background: color-mix(in srgb, var(--farbe) 8%, white);
+    border-left: 5px solid var(--farbe);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .merkbox p { margin-bottom: 6px; }
+  .merkbox p:last-child { margin-bottom: 0; }
+
+  .analogie {
+    background: #FFF8E8;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-weight: 600;
+  }
+
+  .tipp {
+    background: #E8F5E9;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .schritte { margin: 16px 0; display: flex; flex-direction: column; gap: 10px; }
+  .schritt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .schrittnummer {
+    background: var(--farbe);
+    color: white;
+    font-weight: 800;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .faelle {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .fall {
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+  .fall-eins { background: #E8F5E9; }
+  .fall-keine { background: #FDECEA; }
+  .fall-unendlich { background: #EAF1FB; }
+  .fallicon { font-size: 30px; margin-bottom: 6px; }
+  .fall strong { display: block; margin-bottom: 4px; font-size: 16px; }
+  .fall p { font-size: 14px; margin: 0; color: var(--text-soft); }
+
+  /* ===== NAVIGATION ===== */
+  .lern-navigation {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .nav-btn {
+    flex: 1;
+    background: var(--karte-bg);
+    box-shadow: var(--schatten);
+    border-radius: 14px;
+    padding: 16px;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text);
+  }
+  .nav-btn:disabled { opacity: 0.35; cursor: default; }
+  .nav-btn-primary {
+    background: var(--farbe);
+    color: white;
+  }
+
+  /* ===== KARTEIKARTEN ===== */
+  .flip-karte {
+    perspective: 1200px;
+    height: 320px;
+    margin-bottom: 20px;
+  }
+  .flip-innen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .flip-karte.umgedreht .flip-innen {
+    transform: rotateY(180deg);
+  }
+  .flip-vorne, .flip-hinten {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .flip-vorne {
+    background: var(--karte-bg);
+  }
+  .flip-hinten {
+    background: var(--farbe);
+    color: white;
+    transform: rotateY(180deg);
+  }
+  .flip-label {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    margin-bottom: 14px;
+  }
+  .flip-text {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .flip-hinweis {
+    position: absolute;
+    bottom: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.5;
+  }
+
+  /* ===== QUIZ ===== */
+  .quiz-karte {
+    background: var(--karte-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    padding: 24px 22px;
+    margin-bottom: 20px;
+  }
+  .quiz-frage {
+    font-size: 20px;
+    margin-bottom: 18px;
+    color: var(--text);
+  }
+  .quiz-antworten { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-antwort-btn {
+    background: #F4F1EA;
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 16px;
+    border: 3px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+  .quiz-antwort-btn:hover:not(:disabled) {
+    border-color: var(--farbe);
+  }
+  .quiz-antwort-btn:disabled { cursor: default; }
+  .richtig-antwort {
+    background: #E8F5E9 !important;
+    border-color: var(--gruen) !important;
+    color: #2E7D32;
+  }
+  .falsch-antwort {
+    background: #FDECEA !important;
+    border-color: var(--rot) !important;
+    color: #C62828;
+  }
+
+  .quiz-erklaerung {
+    margin-top: 18px;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .quiz-erklaerung.richtig { background: #E8F5E9; }
+  .quiz-erklaerung.falsch { background: #FFF4E5; }
+  .quiz-erklaerung-icon { font-weight: 800; font-size: 17px; margin-bottom: 6px; }
+  .quiz-erklaerung p { margin: 0; font-size: 15px; font-weight: 600; }
+
+  /* ===== ERGEBNIS ===== */
+  .ergebnis-ansicht { text-align: center; padding-top: 20px; }
+  .ergebnis-emoji { font-size: 64px; margin-bottom: 12px; }
+  .ergebnis-ansicht h1 { font-size: 30px; color: var(--farbe); }
+  .ergebnis-prozent {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-soft);
+    margin-top: 4px;
+  }
+  .ergebnis-nachricht {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 20px 0 28px;
+  }
+  .ergebnis-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ergebnis-navigation .nav-btn { flex: none; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 420px) {
+    body { font-size: 16px; }
+    .kopf h1 { font-size: 26px; }
+    .flip-karte { height: 280px; }
+    .flip-text { font-size: 18px; }
+  }
+
+  /* ===== FOKUS-SICHTBARKEIT (Barrierefreiheit) ===== */
+  button:focus-visible {
+    outline: 3px solid var(--farbe);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
